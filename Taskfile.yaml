@@ -1,0 +1,57 @@
+version: '3'
+
+vars:
+  OPENAPI_FILE: api/openapi/exchange_rates.yaml
+  SWAGGER_FILE: docs/api/openapi/exchange_rates.yaml
+
+tasks:
+  default:
+    cmds:
+      - task --list
+    desc: List all available tasks.
+
+  test:
+    desc: Run all unit tests with strict settings.
+    cmds:
+      - go test ./... -failfast -vet=all -count=1
+    silent: true
+
+  gen-code:
+    desc: Generate server code and models from OpenAPI spec.
+    cmds:
+      - go generate ./...
+    silent: true
+
+  install-swagger-cli:
+    desc: Install swagger-cli globally via npm.
+    cmds:
+      - npm install -g swagger-cli
+    silent: true
+
+  bundle-openapi:
+    desc: Bundle OpenAPI spec and regenerate code.
+    cmds:
+      - task gen-code
+      - swagger-cli bundle {{.OPENAPI_FILE}} -o {{.SWAGGER_FILE}} -t yaml
+    silent: true
+
+  swagger-up:
+    desc: Validate and serve Swagger UI via Docker Compose.
+    cmds:
+      - task bundle-openapi
+      - swagger-cli validate {{.OPENAPI_FILE}}
+      - docker-compose up -d
+    silent: true
+
+  swagger-down:
+    desc: Stop Swagger UI Docker containers.
+    cmds:
+      - docker-compose down
+    silent: true
+
+  clean:
+    desc: Clean up generated Swagger files and stop containers.
+    cmds:
+      - docker-compose down || true
+      - rm -f {{.SWAGGER_FILE}}
+    silent: true

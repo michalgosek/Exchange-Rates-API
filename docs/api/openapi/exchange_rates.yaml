@@ -1,0 +1,117 @@
+openapi: 3.0.0
+info:
+  title: Exchange Rates API
+  description: 'Here will be a description :)'
+  contact:
+    email: inbox@michalgosek.com
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Exchange Rates API
+  url: 'https://github.com/michalgosek/Exchange-Rates-API'
+servers:
+  - url: 'http://{hostname}'
+    variables:
+      hostname:
+        default: 'localhost:3000'
+tags:
+  - name: Exchange Rates
+    description: Everything about exchange rates.
+paths:
+  /api/v1/convert:
+    get:
+      tags:
+        - Exchange Rates
+      summary: Returns the exchange rates for cryptocurrencies based on a preconfigured exchange rates table.
+      description: |-
+        Provide the exchange rate for a specified cryptocurrency pair in the direction from -> to, using the 
+        specified amount of the source cryptocurrency to exchange. 
+      operationId: getCryptoExchangeRate
+      parameters:
+        - name: from
+          in: query
+          required: true
+          schema:
+            type: string
+            default: WBTC
+        - name: to
+          in: query
+          required: true
+          schema:
+            type: string
+            default: USDT
+        - name: amount
+          in: query
+          required: true
+          schema:
+            type: number
+            format: double
+            default: 1
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExchangeRate'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/rates:
+    get:
+      tags:
+        - Exchange Rates
+      summary: Returns the latest exchange rates.
+      description: Provide exchange rates for a specified list of currencies (comma-separated) using a given default base currency with the cross-rate formula.
+      operationId: getGlobalExchangeRates
+      parameters:
+        - name: currencies
+          in: query
+          required: true
+          schema:
+            type: string
+            default: USD
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExchangeRate'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    ExchangeRate:
+      type: object
+      properties:
+        from:
+          type: string
+        to:
+          type: string
+        rate:
+          type: string
+      required:
+        - from
+        - to
+        - rate
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+        - code
+        - message

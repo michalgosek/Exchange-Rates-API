@@ -1,0 +1,6 @@
+server:
+  addr: 0.0.0.0
+  port: 3000 
+open_exchange_rates_api:
+  app_id: ""
+  base_url: ""

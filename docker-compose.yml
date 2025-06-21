@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    ports:
+      - 8080:8080
+    environment:
+      SWAGGER_JSON: /foo/exchange_rates.yaml
+    volumes:
+      - ./docs/api/openapi:/foo:ro
+  go-webapp:
+    image: micgos-web-app
+    ports:
+      - 3000:3000
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro
+    command: ["./micgos-web-app", "--config", "/app/config.yaml"]
