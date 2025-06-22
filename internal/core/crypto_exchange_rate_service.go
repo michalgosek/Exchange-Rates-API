@@ -6,8 +6,7 @@ import (
 )
 
 type CryptoExchangeArithmeticService interface {
-	DivWithPrecision(ExchangeRate, ExchangeRate, DecimalPrecision) (ExchangeRate, error)
-	MulWithPrecision(ExchangeRate, ExchangeRate, DecimalPrecision) (ExchangeRate, error)
+	CalculateCrossRateWithPrecission(first, second ExchangeRate, amount Decimal, to DecimalPrecision) (ExchangeRate, error)
 }
 
 type CryptoExchangeRateService struct {
@@ -16,33 +15,22 @@ type CryptoExchangeRateService struct {
 }
 
 func (c *CryptoExchangeRateService) CalculateExchangeRate(ctx context.Context, from, to CurrencyCode, amount Decimal) (CalculatedExchangeRate, error) {
-	tableEntryFrom, err := c.table.GetExchangeRate(from)
+	first, err := c.table.GetExchangeRate(from)
 	if err != nil {
 		return CalculatedExchangeRate{}, fmt.Errorf("failed to get exchange rate: %w", err)
 	}
 
-	tableEntryTo, err := c.table.GetExchangeRate(to)
+	second, err := c.table.GetExchangeRate(to)
 	if err != nil {
 		return CalculatedExchangeRate{}, fmt.Errorf("failed to get exchange rate: %w", err)
 	}
 
-	quantity, err := NewExchangeRate(amount.String())
+	rate, err := c.service.CalculateCrossRateWithPrecission(first.Rate(), second.Rate(), amount, second.DecimalPrecision())
 	if err != nil {
-		return CalculatedExchangeRate{}, fmt.Errorf("failed to create exchange rate: %w", err)
+		return CalculatedExchangeRate{}, fmt.Errorf("failed to calculate cross rate: %w", err)
 	}
 
-	mul, err := c.service.MulWithPrecision(tableEntryFrom.Rate(), quantity, tableEntryTo.DecimalPrecision())
-	if err != nil {
-		return CalculatedExchangeRate{}, fmt.Errorf("failed to multiply rates (%s x %s): %w", tableEntryFrom.Rate(), quantity, err)
-	}
-
-	// from the first rate (EUR) to the second rate (USD) i.e. EUR -> USD
-	div, err := c.service.DivWithPrecision(mul, tableEntryTo.Rate(), tableEntryTo.DecimalPrecision())
-	if err != nil {
-		return CalculatedExchangeRate{}, fmt.Errorf("failed to div rates (%s / %s): %w", mul.String(), tableEntryFrom.Rate().String(), err)
-	}
-
-	return NewCalculatedExchangeRate(from, to, div), nil
+	return NewCalculatedExchangeRate(from, to, rate), nil
 }
 
 func NewCryptoExchangeRateService(service CryptoExchangeArithmeticService, table CryptoExchangeRateTable) *CryptoExchangeRateService {

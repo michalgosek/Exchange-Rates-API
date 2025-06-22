@@ -6,11 +6,12 @@ import (
 )
 
 type GlobalExchangeArithmeticService interface {
-	Div(ExchangeRate, ExchangeRate) (ExchangeRate, error)
+	CalculateCrossRate(first, second ExchangeRate, amount Decimal) (ExchangeRate, error)
 }
 
 type GlobalExchangeRateService struct {
 	service GlobalExchangeArithmeticService
+	amount  Decimal
 }
 
 func (g *GlobalExchangeRateService) CalculateExchangeRates(ctx context.Context, base GlobalCurrencyExchangeRate, rates ...GlobalCurrencyExchangeRate) ([]CalculatedExchangeRate, error) {
@@ -43,15 +44,15 @@ func (g *GlobalExchangeRateService) CalculateExchangeRates(ctx context.Context, 
 			}
 
 			// from the first rate (EUR) to the second rate (USD) i.e. EUR -> USD
-			exchange1, err := g.service.Div(rate2, rate1)
+			exchange1, err := g.service.CalculateCrossRate(rate2, rate1, g.amount)
 			if err != nil {
-				return nil, fmt.Errorf("failed to div rates (%s / %s): %w", rate2.String(), rate1.String(), err)
+				return nil, err
 			}
 
 			// from the second  rate (USD) to the first rate (EUR) i.e. USD -> EUR
-			exchange2, err := g.service.Div(rate1, rate2)
+			exchange2, err := g.service.CalculateCrossRate(rate1, rate2, g.amount)
 			if err != nil {
-				return nil, fmt.Errorf("failed to div rates (%s / %s): %w", rate1.String(), rate2.String(), err)
+				return nil, err
 			}
 
 			calculated1 := NewCalculatedExchangeRate(first.Code(), second.code, exchange1)
@@ -70,7 +71,10 @@ func NewGlobalExchangeRateService(service GlobalExchangeArithmeticService) *Glob
 		panic("global exchange arithmetic service is required")
 	}
 
-	return &GlobalExchangeRateService{service: service}
+	return &GlobalExchangeRateService{
+		service: service,
+		amount:  Decimal{val: 1},
+	}
 }
 
 type GlobalRatePairSet map[string]struct{}

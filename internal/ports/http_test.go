@@ -4,9 +4,10 @@ import (
 	"exchange-rates-api/internal/app"
 	"exchange-rates-api/internal/app/query"
 	"exchange-rates-api/internal/core"
-	core_testabilities "exchange-rates-api/internal/core/testabilities"
+	"exchange-rates-api/internal/infrastructure/math"
 	"exchange-rates-api/internal/ports"
 	ports_testabilities "exchange-rates-api/internal/ports/testabilities"
+
 	"net/http"
 	"net/url"
 	"testing"
@@ -14,57 +15,57 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestHTTPServer_GetGlobalExchangeRates(t *testing.T) {
-	t.Run("should respond with 400 status code when required query parameters are missing in /api/v1/rates request", func(t *testing.T) {
-		tests := map[string]struct {
-			params                            url.Values
-			expectedTestGlobalRatesServiceCfg ports_testabilities.TestGlobalRatesServiceConfig
-		}{
-			"an empty query params list": {
-				params:                            url.Values{},
-				expectedTestGlobalRatesServiceCfg: ports_testabilities.TestGlobalRatesServiceConfig{ExpectedGetLatestExchangeRatesCall: false},
+func TestHTTPServer_GetGlobalExchangeRates_NegativeTestCases(t *testing.T) {
+	tests := map[string]struct {
+		params                            url.Values
+		expectedTestGlobalRatesServiceCfg ports_testabilities.TestGlobalRatesServiceConfig
+	}{
+		"should respond with 400 status code when required query parameters are missing in /api/v1/rates request - an empty query params list": {
+			params:                            url.Values{},
+			expectedTestGlobalRatesServiceCfg: ports_testabilities.TestGlobalRatesServiceConfig{ExpectedGetLatestExchangeRatesCall: false},
+		},
+		"should respond with 400 status code when required query parameters are missing in /api/v1/rates request - base query param only": {
+			params:                            url.Values{"base": []string{"USD"}},
+			expectedTestGlobalRatesServiceCfg: ports_testabilities.TestGlobalRatesServiceConfig{ExpectedGetLatestExchangeRatesCall: false},
+		},
+		"should respond with 400 status code when required query parameters are missing in /api/v1/rates request - query params list with base and one currency": {
+			params: url.Values{
+				"base":       []string{"USD"},
+				"currencies": []string{"PLN"},
 			},
-			"base query param only": {
-				params:                            url.Values{"base": []string{"USD"}},
-				expectedTestGlobalRatesServiceCfg: ports_testabilities.TestGlobalRatesServiceConfig{ExpectedGetLatestExchangeRatesCall: false},
-			},
-			"query params list with base and one currency": {
-				params: url.Values{
-					"base":       []string{"USD"},
-					"currencies": []string{"PLN"},
+			expectedTestGlobalRatesServiceCfg: ports_testabilities.TestGlobalRatesServiceConfig{ExpectedGetLatestExchangeRatesCall: true},
+		},
+	}
+
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			// given:
+			mock := ports_testabilities.NewTestGlobalRatesService(t, tc.expectedTestGlobalRatesServiceCfg)
+			fixture := ports.NewHTTPServerTestFixture(t, &app.Application{
+				Queries: app.Queries{
+					GlobalExchangeRatesHandler: query.NewGlobalExchangeRatesHandler(
+						mock,
+						core.NewGlobalExchangeRateService(math.NewCurrencyExchangeArithmeticService(math.CurrencyExchangeRatePrecision)),
+					),
 				},
-				expectedTestGlobalRatesServiceCfg: ports_testabilities.TestGlobalRatesServiceConfig{ExpectedGetLatestExchangeRatesCall: true},
-			},
-		}
-
-		for name, tc := range tests {
-			t.Run(name, func(t *testing.T) {
-				// given:
-				mock := ports_testabilities.NewTestGlobalRatesService(t, tc.expectedTestGlobalRatesServiceCfg)
-				fixture := ports.NewHTTPServerTestFixture(t, &app.Application{
-					Queries: app.Queries{
-						GlobalExchangeRatesHandler: query.NewGlobalExchangeRatesHandler(
-							mock,
-							core.NewGlobalExchangeRateService(core_testabilities.NewTestGlobalExchangeArithmeticServiceFloat64(t, core_testabilities.DefaultRoundPrecision)),
-						),
-					},
-				})
-
-				// when:
-				rec := fixture.NewResponseRecorder()
-				req := fixture.NewRequestWithParams(t.Context(), http.MethodGet, "/api/v1/rates", tc.params)
-				fixture.ServeHTTP(req, rec)
-
-				// then:
-				resp := rec.Result()
-				expectedStatusCode := http.StatusBadRequest
-
-				require.Equal(t, expectedStatusCode, resp.StatusCode)
-				mock.AssertCalled()
 			})
-		}
-	})
 
+			// when:
+			rec := fixture.NewResponseRecorder()
+			req := fixture.NewRequestWithParams(t.Context(), http.MethodGet, "/api/v1/rates", tc.params)
+			fixture.ServeHTTP(req, rec)
+
+			// then:
+			resp := rec.Result()
+			expectedStatusCode := http.StatusBadRequest
+
+			require.Equal(t, expectedStatusCode, resp.StatusCode)
+			mock.AssertCalled()
+		})
+	}
+}
+
+func TestHTTPServer_GetGlobalExchangeRates_PostivieTestCase(t *testing.T) {
 	t.Run("should respond with calculated exchange rates rounded to 5 decimal places for /api/v1/rates when queried with base=USD and currencies=EUR,PLN", func(t *testing.T) {
 		// given:
 		mock := ports_testabilities.NewTestGlobalRatesService(t, ports_testabilities.DefaultGlobalTestRatesServiceConfig)
@@ -72,7 +73,7 @@ func TestHTTPServer_GetGlobalExchangeRates(t *testing.T) {
 			Queries: app.Queries{
 				GlobalExchangeRatesHandler: query.NewGlobalExchangeRatesHandler(
 					mock,
-					core.NewGlobalExchangeRateService(core_testabilities.NewTestGlobalExchangeArithmeticServiceFloat64(t, core_testabilities.DefaultRoundPrecision)),
+					core.NewGlobalExchangeRateService(math.NewCurrencyExchangeArithmeticService(math.CurrencyExchangeRatePrecision)),
 				),
 			},
 		})
@@ -95,7 +96,7 @@ func TestHTTPServer_GetGlobalExchangeRates(t *testing.T) {
 			},
 			{
 				From: "EUR",
-				Rate: "1.15245",
+				Rate: "1.1524",
 				To:   "USD",
 			},
 			{
@@ -110,7 +111,7 @@ func TestHTTPServer_GetGlobalExchangeRates(t *testing.T) {
 			},
 			{
 				From: "USD",
-				Rate: "3.70394",
+				Rate: "3.7039",
 				To:   "PLN",
 			},
 		}
@@ -132,55 +133,55 @@ func TestHTTPServer_GetGlobalExchangeRates(t *testing.T) {
 	})
 }
 
-func TestHTTPServer_GetCryptoExchangeRate(t *testing.T) {
-	t.Run("should respond with 400 status code when required query parameters are missing in /api/v1/convert request", func(t *testing.T) {
-		tests := map[string]struct {
-			params url.Values
-		}{
-			"an empty query params list": {
-				params: url.Values{},
+func TestHTTPServer_GetCryptoExchangeRate_NegativeTestCases(t *testing.T) {
+	tests := map[string]struct {
+		params url.Values
+	}{
+		"should respond with 400 status code when required query parameters are missing in /api/v1/convert request - an empty query params list": {
+			params: url.Values{},
+		},
+		"should respond with 400 status code when required query parameters are missing in /api/v1/convert request - from query param only": {
+			params: url.Values{"from": []string{"WBTC"}},
+		},
+		"should respond with 400 status code when required query parameters are missing in /api/v1/convert request - to query param only": {
+			params: url.Values{"to": []string{"WBTC"}},
+		},
+		"should respond with 400 status code when required query parameters are missing in /api/v1/convert request - amount query param only": {
+			params: url.Values{"amount": []string{"1"}},
+		},
+		"should respond with 400 status code when required query parameters are missing in /api/v1/convert request - query params list with from and to currency": {
+			params: url.Values{
+				"from": []string{"USDT"},
+				"to":   []string{"WBTC"},
 			},
-			"from query param only": {
-				params: url.Values{"from": []string{"WBTC"}},
-			},
-			"to query param only": {
-				params: url.Values{"to": []string{"WBTC"}},
-			},
-			"amount query param only": {
-				params: url.Values{"amount": []string{"1"}},
-			},
-			"query params list with from and to currency": {
-				params: url.Values{
-					"from": []string{"USDT"},
-					"to":   []string{"WBTC"},
+		},
+	}
+
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			// given:
+			service := core.NewCryptoExchangeRateService(math.NewCurrencyExchangeArithmeticService(math.CurrencyExchangeRatePrecision), core.CryptoExchangeRateTable{})
+			fixture := ports.NewHTTPServerTestFixture(t, &app.Application{
+				Queries: app.Queries{
+					CryptoExchangeRateHandler: query.NewCryptoExchangeRateHandler(service),
 				},
-			},
-		}
-
-		for name, tc := range tests {
-			t.Run(name, func(t *testing.T) {
-				// given:
-				service := core.NewCryptoExchangeRateService(core_testabilities.NewTestGlobalExchangeArithmeticServiceFloat64(t, core_testabilities.DefaultRoundPrecision), core.CryptoExchangeRateTable{})
-				fixture := ports.NewHTTPServerTestFixture(t, &app.Application{
-					Queries: app.Queries{
-						CryptoExchangeRateHandler: query.NewCryptoExchangeRateHandler(service),
-					},
-				})
-
-				rec := fixture.NewResponseRecorder()
-				req := fixture.NewRequestWithParams(t.Context(), http.MethodGet, "/api/v1/convert", tc.params)
-				expectedStatusCode := http.StatusBadRequest
-
-				// when:
-				fixture.ServeHTTP(req, rec)
-
-				// then:
-				resp := rec.Result()
-				require.Equal(t, expectedStatusCode, resp.StatusCode)
 			})
-		}
-	})
 
+			rec := fixture.NewResponseRecorder()
+			req := fixture.NewRequestWithParams(t.Context(), http.MethodGet, "/api/v1/convert", tc.params)
+			expectedStatusCode := http.StatusBadRequest
+
+			// when:
+			fixture.ServeHTTP(req, rec)
+
+			// then:
+			resp := rec.Result()
+			require.Equal(t, expectedStatusCode, resp.StatusCode)
+		})
+	}
+}
+
+func TestHTTPServer_GetCryptoExchangeRate_PositiveTestCase(t *testing.T) {
 	t.Run("should respond with calculated exchange rate rounded to 5 decimal places for /api/v1/convert when queried with from=WBTC, to=USDT and amount=1", func(t *testing.T) {
 		// given:
 		const WBTCPrecision = 5
@@ -189,7 +190,7 @@ func TestHTTPServer_GetCryptoExchangeRate(t *testing.T) {
 		table := make(core.CryptoExchangeRateTable)
 		table.AddExchangeRate(core.USDT, core.NewCryptoExchangeRateTableEntry(ports_testabilities.NewExchangeRateTestHelper(t, "0.990"), ports_testabilities.NewDecimalPrecisionTestHelper(t, USDTPrecision)))
 		table.AddExchangeRate(core.WBTC, core.NewCryptoExchangeRateTableEntry(ports_testabilities.NewExchangeRateTestHelper(t, "57037.22"), ports_testabilities.NewDecimalPrecisionTestHelper(t, WBTCPrecision)))
-		service := core.NewCryptoExchangeRateService(core_testabilities.NewTestGlobalExchangeArithmeticServiceFloat64(t, core_testabilities.DefaultRoundPrecision), table)
+		service := core.NewCryptoExchangeRateService(math.NewCurrencyExchangeArithmeticService(math.DefaultExchangeRatePrecision), table)
 
 		fixture := ports.NewHTTPServerTestFixture(t, &app.Application{
 			Queries: app.Queries{

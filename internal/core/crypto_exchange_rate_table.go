@@ -13,7 +13,6 @@ func (c CryptoExchangeRateTable) GetExchangeRate(code CurrencyCode) (CryptoExcha
 	if !ok {
 		return CryptoExchangeRateTableEntry{}, fmt.Errorf("invalid or unsupported crypto currency code: %s", code)
 	}
-
 	return v, nil
 }
 
@@ -22,10 +21,10 @@ type CryptoExchangeRateTableEntry struct {
 	precision DecimalPrecision
 }
 
-func (c CryptoExchangeRateTableEntry) Rate() ExchangeRate                 { return c.rate }
-func (c CryptoExchangeRateTableEntry) DecimalPrecision() DecimalPrecision { return c.precision }
+func (c *CryptoExchangeRateTableEntry) Rate() ExchangeRate                 { return c.rate }
+func (c *CryptoExchangeRateTableEntry) DecimalPrecision() DecimalPrecision { return c.precision }
 
-func (c CryptoExchangeRateTableEntry) EqualsTo(outer CryptoExchangeRateTableEntry) bool {
+func (c *CryptoExchangeRateTableEntry) EqualsTo(outer CryptoExchangeRateTableEntry) bool {
 	return c.rate.EqualsTo(outer.Rate()) && c.precision.EqualsTo(outer.DecimalPrecision())
 }
 
@@ -48,11 +47,11 @@ func NewDefaultCryptoExchangeRateTable() CryptoExchangeRateTable {
 			precision: DecimalPrecision{val: 18},
 		},
 		USDT: CryptoExchangeRateTableEntry{
-			rate:      ExchangeRate{val: "0.999"},
+			rate:      ExchangeRate{val: "0.990"},
 			precision: DecimalPrecision{val: 6},
 		},
 		WBTC: CryptoExchangeRateTableEntry{
-			rate:      ExchangeRate{val: "57.03722"},
+			rate:      ExchangeRate{val: "57037.22"},
 			precision: DecimalPrecision{val: 8},
 		},
 	}
