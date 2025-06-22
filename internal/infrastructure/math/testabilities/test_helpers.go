@@ -8,6 +8,7 @@ import (
 )
 
 func NewExchangeRateTestHelper(t *testing.T, s string) core.ExchangeRate {
+	t.Helper()
 	v, err := core.NewExchangeRate(s)
 	require.NoError(t, err)
 	require.NotZero(t, v)
@@ -15,6 +16,7 @@ func NewExchangeRateTestHelper(t *testing.T, s string) core.ExchangeRate {
 }
 
 func NewDecimalPrecisionTestHelper(t *testing.T, u uint32) core.DecimalPrecision {
+	t.Helper()
 	v, err := core.NewDecimalPrecision(u)
 	require.NoError(t, err)
 	require.NotZero(t, v)
@@ -22,6 +24,7 @@ func NewDecimalPrecisionTestHelper(t *testing.T, u uint32) core.DecimalPrecision
 }
 
 func NewDecimalTestHelper(t *testing.T, u float64) core.Decimal {
+	t.Helper()
 	v, err := core.NewDecimal(u)
 	require.NoError(t, err)
 	require.NotZero(t, v)
