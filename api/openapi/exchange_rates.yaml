@@ -80,7 +80,7 @@ paths:
           required: true
           schema:
             type: string
-            default: USD
+            default: EUR,PLN
       responses:
         '200':
           description: Successful operation

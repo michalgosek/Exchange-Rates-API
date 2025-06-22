@@ -3,12 +3,18 @@ version: '3'
 vars:
   OPENAPI_FILE: api/openapi/exchange_rates.yaml
   SWAGGER_FILE: docs/api/openapi/exchange_rates.yaml
+  APP_IMAGE_TAG: micgos-web-app
 
 tasks:
   default:
     cmds:
       - task --list
     desc: List all available tasks.
+
+  build-image:
+    desc: Build HTTP server Docker image using Dockerfile definition.
+    cmds:
+      - docker build -t {{.APP_IMAGE_TAG}} .
 
   test:
     desc: Run all unit tests with strict settings.
@@ -35,16 +41,16 @@ tasks:
       - swagger-cli bundle {{.OPENAPI_FILE}} -o {{.SWAGGER_FILE}} -t yaml
     silent: true
 
-  swagger-up:
-    desc: Validate and serve Swagger UI via Docker Compose.
+  env-up:
+    desc: Validate and serve Swagger UI, Exchange Rates HTTP via Docker Compose.
     cmds:
       - task bundle-openapi
       - swagger-cli validate {{.OPENAPI_FILE}}
       - docker-compose up -d
     silent: true
 
-  swagger-down:
-    desc: Stop Swagger UI Docker containers.
+  env-down:
+    desc: Stop Swagger UI, Exchange Rates HTTP Docker containers.
     cmds:
       - docker-compose down
     silent: true

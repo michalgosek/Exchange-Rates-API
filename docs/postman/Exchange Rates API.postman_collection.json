@@ -1,0 +1,72 @@
+{
+	"info": {
+		"_postman_id": "cb75ff0f-5ec8-48f2-a124-98d121a0ab58",
+		"name": "Exchange Rates API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18785366"
+	},
+	"item": [
+		{
+			"name": "Rates",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/v1/rates?currencies=PLN,GBP,EUR",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"v1",
+						"rates"
+					],
+					"query": [
+						{
+							"key": "currencies",
+							"value": "PLN,GBP,EUR"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Convert",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/v1/convert?from=FLOKI&to=BEER&amount=2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"v1",
+						"convert"
+					],
+					"query": [
+						{
+							"key": "from",
+							"value": "FLOKI"
+						},
+						{
+							"key": "to",
+							"value": "BEER"
+						},
+						{
+							"key": "amount",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

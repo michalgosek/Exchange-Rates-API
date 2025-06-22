@@ -54,13 +54,13 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ExchangeRate'
+                  $ref: '#/components/schemas/ExchangeRateDTO'
         default:
           description: Unexpected error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorDTO'
   /api/v1/rates:
     get:
       tags:
@@ -74,7 +74,7 @@ paths:
           required: true
           schema:
             type: string
-            default: USD
+            default: 'EUR,PLN'
       responses:
         '200':
           description: Successful operation
@@ -83,16 +83,16 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ExchangeRate'
+                  $ref: '#/components/schemas/ExchangeRateDTO'
         default:
           description: Unexpected error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/ErrorDTO'
 components:
   schemas:
-    ExchangeRate:
+    ExchangeRateDTO:
       type: object
       properties:
         from:
@@ -105,7 +105,7 @@ components:
         - from
         - to
         - rate
-    Error:
+    ErrorDTO:
       type: object
       properties:
         code:
