@@ -3,8 +3,8 @@ package server
 import (
 	"context"
 	"exchange-rates-api/internal/app"
-	"exchange-rates-api/internal/infrastructure/config"
 	"exchange-rates-api/internal/ports"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -12,9 +12,16 @@ import (
 	"time"
 )
 
-func RunHTTPWithGracefulShutdown(cfg *config.Config, app *app.Application) <-chan struct{} {
+type Config struct {
+	Addr string `mapstructure:"addr"`
+	Port int    `mapstructure:"port"`
+}
+
+func (c *Config) SocketAddr() string { return fmt.Sprintf("%s:%d", c.Addr, c.Port) }
+
+func RunHTTPWithGracefulShutdown(cfg *Config, app *app.Application) <-chan struct{} {
 	srv := http.Server{
-		Addr:           cfg.Server.SocketAddr(),
+		Addr:           cfg.SocketAddr(),
 		Handler:        ports.NewHTTP(app),
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,

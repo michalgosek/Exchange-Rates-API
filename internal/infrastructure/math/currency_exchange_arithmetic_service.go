@@ -8,8 +8,8 @@ import (
 )
 
 const (
-	DefaultExchangeRatePrecision  = 50
-	CurrencyExchangeRatePrecision = 5
+	DefaultExchangeRatePrecision        = 50
+	GlobalCurrencyExchangeRatePrecision = 5
 )
 
 type CurrencyExchangeArithmeticService struct {

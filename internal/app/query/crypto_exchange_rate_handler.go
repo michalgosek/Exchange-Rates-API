@@ -14,7 +14,7 @@ type CryptoExchangeRateHandler struct {
 	service CryptoExchangeRateService
 }
 
-func (c CryptoExchangeRateHandler) Handle(ctx context.Context, query CryptoExchangeRateQuery) (core.CalculatedExchangeRate, error) {
+func (c *CryptoExchangeRateHandler) Handle(ctx context.Context, query *CryptoExchangeRateQuery) (core.CalculatedExchangeRate, error) {
 	dec, err := core.NewDecimal(query.Amount())
 	if err != nil {
 		return core.CalculatedExchangeRate{}, fmt.Errorf("failed to create decimal from float64: %w", err)

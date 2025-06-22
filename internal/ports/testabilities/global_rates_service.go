@@ -35,7 +35,7 @@ func (g *TestGlobalRatesService) AssertCalled() {
 	require.Equal(g.t, g.cfg.ExpectedGetLatestExchangeRatesCall, g.called)
 }
 
-func (g *TestGlobalRatesService) GetLatestExchangeRates(ctx context.Context, query query.GlobalExchangeRatesQuery) ([]core.GlobalCurrencyExchangeRate, error) {
+func (g *TestGlobalRatesService) GetLatestExchangeRates(ctx context.Context, query *query.GlobalExchangeRatesQuery) ([]core.GlobalCurrencyExchangeRate, error) {
 	g.called = true
 
 	g.t.Helper()

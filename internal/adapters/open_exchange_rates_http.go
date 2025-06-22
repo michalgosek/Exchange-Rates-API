@@ -19,7 +19,7 @@ type OpenExchangeRatesHTTP struct {
 	http *resty.Client
 }
 
-func (o *OpenExchangeRatesHTTP) GetLatestExchangeRates(ctx context.Context, query query.GlobalExchangeRatesQuery) ([]core.GlobalCurrencyExchangeRate, error) {
+func (o *OpenExchangeRatesHTTP) GetLatestExchangeRates(ctx context.Context, query *query.GlobalExchangeRatesQuery) ([]core.GlobalCurrencyExchangeRate, error) {
 	const URL = "/latest.json"
 
 	var dto ExchangeRatesDTO

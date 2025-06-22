@@ -14,26 +14,27 @@ import (
 
 //go:generate go tool oapi-codegen -generate types -o ../internal/ports/openapi_types.go -package ports ../api/openapi/exchange_rates.yaml
 //go:generate go tool oapi-codegen -generate gin-server -o ../internal/ports/openapi_api.gen.go -package ports ../api/openapi/exchange_rates.yaml
+
 func main() {
 	// Configuration workflow initialization:
 	path := flag.String("config", "../config.yaml", "Path to the HTTP server config file.")
 	flag.Parse()
+
 	cfg, err := config.LoadConfig(*path)
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	log.Print(cfg.String())
 
 	// Dependencies workflow initialization:
 	app := &app.Application{
-		Queries: app.Queries{
+		Queries: &app.Queries{
 			GlobalExchangeRatesHandler: query.NewGlobalExchangeRatesHandler(
 				adapters.NewOpenExchangeRatesHTTP(&adapters.OpenExchangeRatesHTTPConfig{
 					AppID:   cfg.OpenExchangeRatesAPI.AppID,
 					BaseURL: cfg.OpenExchangeRatesAPI.BaseURL,
 				}),
-				core.NewGlobalExchangeRateService(math.NewCurrencyExchangeArithmeticService(math.CurrencyExchangeRatePrecision)),
+				core.NewGlobalExchangeRateService(math.NewCurrencyExchangeArithmeticService(math.GlobalCurrencyExchangeRatePrecision)),
 			),
 			CryptoExchangeRateHandler: query.NewCryptoExchangeRateHandler(
 				core.NewCryptoExchangeRateService(
@@ -45,6 +46,6 @@ func main() {
 	}
 
 	// HTTP Server workflow initialization:
-	done := server.RunHTTPWithGracefulShutdown(cfg, app)
+	done := server.RunHTTPWithGracefulShutdown(&cfg.Server, app)
 	<-done
 }

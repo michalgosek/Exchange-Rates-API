@@ -42,10 +42,10 @@ func TestHTTPServer_GetGlobalExchangeRates_NegativeTestCases(t *testing.T) {
 			// given:
 			mock := ports_testabilities.NewTestGlobalRatesService(t, tc.expectedTestGlobalRatesServiceCfg)
 			fixture := ports.NewHTTPServerTestFixture(t, &app.Application{
-				Queries: app.Queries{
+				Queries: &app.Queries{
 					GlobalExchangeRatesHandler: query.NewGlobalExchangeRatesHandler(
 						mock,
-						core.NewGlobalExchangeRateService(math.NewCurrencyExchangeArithmeticService(math.CurrencyExchangeRatePrecision)),
+						core.NewGlobalExchangeRateService(math.NewCurrencyExchangeArithmeticService(math.GlobalCurrencyExchangeRatePrecision)),
 					),
 				},
 			})
@@ -70,10 +70,10 @@ func TestHTTPServer_GetGlobalExchangeRates_PostivieTestCase(t *testing.T) {
 		// given:
 		mock := ports_testabilities.NewTestGlobalRatesService(t, ports_testabilities.DefaultGlobalTestRatesServiceConfig)
 		fixture := ports.NewHTTPServerTestFixture(t, &app.Application{
-			Queries: app.Queries{
+			Queries: &app.Queries{
 				GlobalExchangeRatesHandler: query.NewGlobalExchangeRatesHandler(
 					mock,
-					core.NewGlobalExchangeRateService(math.NewCurrencyExchangeArithmeticService(math.CurrencyExchangeRatePrecision)),
+					core.NewGlobalExchangeRateService(math.NewCurrencyExchangeArithmeticService(math.GlobalCurrencyExchangeRatePrecision)),
 				),
 			},
 		})
@@ -160,9 +160,9 @@ func TestHTTPServer_GetCryptoExchangeRate_NegativeTestCases(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 			// given:
-			service := core.NewCryptoExchangeRateService(math.NewCurrencyExchangeArithmeticService(math.CurrencyExchangeRatePrecision), core.CryptoExchangeRateTable{})
+			service := core.NewCryptoExchangeRateService(math.NewCurrencyExchangeArithmeticService(math.GlobalCurrencyExchangeRatePrecision), core.CryptoExchangeRateTable{})
 			fixture := ports.NewHTTPServerTestFixture(t, &app.Application{
-				Queries: app.Queries{
+				Queries: &app.Queries{
 					CryptoExchangeRateHandler: query.NewCryptoExchangeRateHandler(service),
 				},
 			})
@@ -193,7 +193,7 @@ func TestHTTPServer_GetCryptoExchangeRate_PositiveTestCase(t *testing.T) {
 		service := core.NewCryptoExchangeRateService(math.NewCurrencyExchangeArithmeticService(math.DefaultExchangeRatePrecision), table)
 
 		fixture := ports.NewHTTPServerTestFixture(t, &app.Application{
-			Queries: app.Queries{
+			Queries: &app.Queries{
 				CryptoExchangeRateHandler: query.NewCryptoExchangeRateHandler(service),
 			},
 		})

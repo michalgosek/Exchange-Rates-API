@@ -3,21 +3,15 @@ package config
 import (
 	"encoding/json"
 	"exchange-rates-api/internal/adapters"
+	"exchange-rates-api/internal/infrastructure/server"
 	"fmt"
 	"strings"
 
 	"github.com/spf13/viper"
 )
 
-type ServerConfig struct {
-	Addr string `mapstructure:"addr"`
-	Port int    `mapstructure:"port"`
-}
-
-func (s *ServerConfig) SocketAddr() string { return fmt.Sprintf("%s:%d", s.Addr, s.Port) }
-
 type Config struct {
-	Server               ServerConfig                         `mapstructure:"server"`
+	Server               server.Config                        `mapstructure:"server"`
 	OpenExchangeRatesAPI adapters.OpenExchangeRatesHTTPConfig `mapstructure:"open_exchange_rates_api"`
 }
 

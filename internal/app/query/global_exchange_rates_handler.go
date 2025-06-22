@@ -7,7 +7,7 @@ import (
 )
 
 type GlobalRatesProvider interface {
-	GetLatestExchangeRates(ctx context.Context, query GlobalExchangeRatesQuery) ([]core.GlobalCurrencyExchangeRate, error)
+	GetLatestExchangeRates(ctx context.Context, query *GlobalExchangeRatesQuery) ([]core.GlobalCurrencyExchangeRate, error)
 }
 
 type GlobalExchangeRateService interface {
@@ -19,7 +19,7 @@ type GlobalExchangeRatesHandler struct {
 	service  GlobalExchangeRateService
 }
 
-func (g GlobalExchangeRatesHandler) Handle(ctx context.Context, query GlobalExchangeRatesQuery) ([]core.CalculatedExchangeRate, error) {
+func (g *GlobalExchangeRatesHandler) Handle(ctx context.Context, query *GlobalExchangeRatesQuery) ([]core.CalculatedExchangeRate, error) {
 	rates, err := g.provider.GetLatestExchangeRates(ctx, query)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get latest exchange rate: %w", err)

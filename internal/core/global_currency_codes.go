@@ -174,7 +174,7 @@ var (
 	ZWL = CurrencyCode{"ZWL"}
 )
 
-var currencyCodesRegister = map[string]CurrencyCode{
+var globalCodesRegister = map[string]CurrencyCode{
 	"AED": AED,
 	"AFN": AFN,
 	"ALL": ALL,
@@ -347,10 +347,9 @@ var currencyCodesRegister = map[string]CurrencyCode{
 }
 
 func NewGlobalCurrencyCode(code string) (CurrencyCode, error) {
-	val, ok := currencyCodesRegister[code]
+	val, ok := globalCodesRegister[code]
 	if !ok {
 		return CurrencyCode{}, fmt.Errorf("invalid or unsupported global currency code: %s", code)
 	}
-
 	return val, nil
 }

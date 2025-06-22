@@ -8,5 +8,5 @@ type Queries struct {
 }
 
 type Application struct {
-	Queries Queries
+	Queries *Queries
 }

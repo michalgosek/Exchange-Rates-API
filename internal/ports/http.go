@@ -67,8 +67,8 @@ func NewHTTP(app *app.Application) *HTTP {
 	return &http
 }
 
-func ConvertToExchangeRateDTO(rate core.CalculatedExchangeRate) ExchangeRateDTO {
-	return ExchangeRateDTO{
+func ConvertToExchangeRateDTO(rate core.CalculatedExchangeRate) *ExchangeRateDTO {
+	return &ExchangeRateDTO{
 		From: rate.From(),
 		Rate: rate.ExchangeRate().String(),
 		To:   rate.To(),

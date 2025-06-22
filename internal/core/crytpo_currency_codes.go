@@ -23,6 +23,5 @@ func NewCryptoCurrencyCode(code string) (CurrencyCode, error) {
 	if !ok {
 		return CurrencyCode{}, fmt.Errorf("invalid or unsupported crypto currency code: %s", code)
 	}
-
 	return val, nil
 }

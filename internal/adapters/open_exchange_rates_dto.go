@@ -13,7 +13,7 @@ type ExchangeRatesDTO struct {
 	Rates      map[string]float64 `json:"rates"`
 }
 
-func (e ExchangeRatesDTO) ToGlobalCurrencyExchangeRate() ([]core.GlobalCurrencyExchangeRate, error) {
+func (e *ExchangeRatesDTO) ToGlobalCurrencyExchangeRate() ([]core.GlobalCurrencyExchangeRate, error) {
 	var rates []core.GlobalCurrencyExchangeRate
 	for k, v := range e.Rates {
 		code, err := core.NewGlobalCurrencyCode(k)
