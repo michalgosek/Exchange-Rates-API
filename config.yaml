@@ -3,4 +3,4 @@ server:
   port: 3000 
 open_exchange_rates_api:
   app_id: ""
-  base_url: ""
+  base_url: https://openexchangerates.org/api
