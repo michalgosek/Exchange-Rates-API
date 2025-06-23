@@ -11,7 +11,7 @@ type GlobalRatesProvider interface {
 }
 
 type GlobalExchangeRateService interface {
-	CalculateExchangeRates(ctx context.Context, base core.GlobalCurrencyExchangeRate, rates ...core.GlobalCurrencyExchangeRate) ([]core.CalculatedExchangeRate, error)
+	CalculateExchangeRates(ctx context.Context, rates ...core.GlobalCurrencyExchangeRate) ([]core.CalculatedExchangeRate, error)
 }
 
 type GlobalExchangeRatesHandler struct {
@@ -25,18 +25,7 @@ func (g *GlobalExchangeRatesHandler) Handle(ctx context.Context, query *GlobalEx
 		return nil, fmt.Errorf("failed to get latest exchange rate: %w", err)
 	}
 
-	code, err := core.NewGlobalCurrencyCode(query.Base())
-	if err != nil {
-		return nil, fmt.Errorf("failed to create global currency code: %w", err)
-	}
-
-	dec, err := core.NewDecimal(1)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create decimal from float64: %w", err)
-	}
-
-	base := core.NewGlobalCurrencyExchangeRate(code, dec)
-	exchanges, err := g.service.CalculateExchangeRates(ctx, base, rates...)
+	exchanges, err := g.service.CalculateExchangeRates(ctx, rates...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to calculcate exchange rates: %w", err)
 	}

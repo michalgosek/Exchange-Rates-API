@@ -94,26 +94,6 @@ func TestHTTPServer_GetGlobalExchangeRates_PostivieTestCase(t *testing.T) {
 				To:   "EUR",
 				Rate: "0.23427",
 			},
-			{
-				From: "EUR",
-				Rate: "1.1524",
-				To:   "USD",
-			},
-			{
-				From: "USD",
-				Rate: "0.86772",
-				To:   "EUR",
-			},
-			{
-				From: "PLN",
-				Rate: "0.26998",
-				To:   "USD",
-			},
-			{
-				From: "USD",
-				Rate: "3.7039",
-				To:   "PLN",
-			},
 		}
 
 		// when:
@@ -168,7 +148,7 @@ func TestHTTPServer_GetCryptoExchangeRate_NegativeTestCases(t *testing.T) {
 			})
 
 			rec := fixture.NewResponseRecorder()
-			req := fixture.NewRequestWithParams(t.Context(), http.MethodGet, "/api/v1/convert", tc.params)
+			req := fixture.NewRequestWithParams(t.Context(), http.MethodGet, "/api/v1/exchange", tc.params)
 			expectedStatusCode := http.StatusBadRequest
 
 			// when:
@@ -204,7 +184,7 @@ func TestHTTPServer_GetCryptoExchangeRate_PositiveTestCase(t *testing.T) {
 		params.Add("amount", "1")
 
 		rec := fixture.NewResponseRecorder()
-		req := fixture.NewRequestWithParams(t.Context(), http.MethodGet, "/api/v1/convert", params)
+		req := fixture.NewRequestWithParams(t.Context(), http.MethodGet, "/api/v1/exchange", params)
 		expectedStatusCode := http.StatusOK
 		expectedDTO := ports.CryptoExchangeRateDTO{
 			From:   "WBTC",

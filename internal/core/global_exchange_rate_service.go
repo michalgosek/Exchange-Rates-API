@@ -14,17 +14,16 @@ type GlobalExchangeRateService struct {
 	amount  Decimal
 }
 
-func (g *GlobalExchangeRateService) CalculateExchangeRates(ctx context.Context, base GlobalCurrencyExchangeRate, rates ...GlobalCurrencyExchangeRate) ([]CalculatedExchangeRate, error) {
+func (g *GlobalExchangeRateService) CalculateExchangeRates(ctx context.Context, rates ...GlobalCurrencyExchangeRate) ([]CalculatedExchangeRate, error) {
 	if len(rates) < 2 {
 		return nil, fmt.Errorf("invalid rates number: fewer than two rates are provided")
 	}
 
 	var exchanges []CalculatedExchangeRate
 
-	total := append(rates, base)
 	memo := make(GlobalRatePairSet)
-	for _, first := range total {
-		for _, second := range total {
+	for _, first := range rates {
+		for _, second := range rates {
 			if first.EqualsTo(second) {
 				continue
 			}
