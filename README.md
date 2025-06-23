@@ -51,33 +51,13 @@ Returns a JSON array of exchange rate objects.
 [
     {
         "from": "EUR",
-        "rate": "4.2809",
+        "rate": "4.2680",
         "to": "PLN"
     },
     {
         "from": "PLN",
-        "rate": "0.23360",
+        "rate": "0.23430",
         "to": "EUR"
-    },
-    {
-        "from": "EUR",
-        "rate": "1.1524",
-        "to": "USD"
-    },
-    {
-        "from": "USD",
-        "rate": "0.86772",
-        "to": "EUR"
-    },
-    {
-        "from": "PLN",
-        "rate": "0.26921",
-        "to": "USD"
-    },
-    {
-        "from": "USD",
-        "rate": "3.7146",
-        "to": "PLN"
     }
 ]
 ```
