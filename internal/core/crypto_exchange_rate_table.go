@@ -46,6 +46,8 @@ func NewDefaultCryptoExchangeRateTable() CryptoExchangeRateTable {
 			rate:      ExchangeRate{val: "6.87"},
 			precision: DecimalPrecision{val: 18},
 		},
+		// It seems that the value provided in the assignment's crypto table (i.e., 0.999)
+		// was incorrect, as it does not yield WBTC → USDT = 57613.353535
 		USDT: CryptoExchangeRateTableEntry{
 			rate:      ExchangeRate{val: "0.990"},
 			precision: DecimalPrecision{val: 6},
