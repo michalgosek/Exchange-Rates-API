@@ -32,7 +32,7 @@ func (h *HTTP) GetCryptoExchangeRate(c *gin.Context, params GetCryptoExchangeRat
 		return
 	}
 
-	c.JSON(http.StatusOK, ConvertToExchangeRateDTO(exchange))
+	c.JSON(http.StatusOK, ConvertToCryptoExchangeRateDTO(exchange))
 }
 
 func (h *HTTP) GetGlobalExchangeRates(c *gin.Context, params GetGlobalExchangeRatesParams) {
@@ -48,7 +48,7 @@ func (h *HTTP) GetGlobalExchangeRates(c *gin.Context, params GetGlobalExchangeRa
 		return
 	}
 
-	c.JSON(http.StatusOK, ConvertToExchangeRateDTOs(exchanges...))
+	c.JSON(http.StatusOK, ConvertToGlobalExchangeRateDTOs(exchanges...))
 }
 
 func NewHTTP(app *app.Application) *HTTP {
@@ -67,18 +67,18 @@ func NewHTTP(app *app.Application) *HTTP {
 	return &http
 }
 
-func ConvertToExchangeRateDTO(rate core.CalculatedExchangeRate) *ExchangeRateDTO {
-	return &ExchangeRateDTO{
-		From: rate.From(),
-		Rate: rate.ExchangeRate().String(),
-		To:   rate.To(),
+func ConvertToCryptoExchangeRateDTO(rate core.CalculatedExchangeRate) *CryptoExchangeRateDTO {
+	return &CryptoExchangeRateDTO{
+		From:   rate.From(),
+		Amount: rate.ExchangeRate().String(),
+		To:     rate.To(),
 	}
 }
 
-func ConvertToExchangeRateDTOs(rates ...core.CalculatedExchangeRate) []ExchangeRateDTO {
-	var dtos []ExchangeRateDTO
+func ConvertToGlobalExchangeRateDTOs(rates ...core.CalculatedExchangeRate) []GlobalExchangeRateDTO {
+	var dtos []GlobalExchangeRateDTO
 	for _, r := range rates {
-		dtos = append(dtos, ExchangeRateDTO{
+		dtos = append(dtos, GlobalExchangeRateDTO{
 			From: r.From(),
 			To:   r.To(),
 			Rate: r.ExchangeRate().String(),

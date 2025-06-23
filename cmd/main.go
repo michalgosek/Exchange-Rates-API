@@ -14,7 +14,6 @@ import (
 
 //go:generate go tool oapi-codegen -generate types -o ../internal/ports/openapi_types.go -package ports ../api/openapi/exchange_rates.yaml
 //go:generate go tool oapi-codegen -generate gin-server -o ../internal/ports/openapi_api.gen.go -package ports ../api/openapi/exchange_rates.yaml
-
 func main() {
 	// Configuration workflow initialization:
 	path := flag.String("config", "../config.yaml", "Path to the HTTP server config file.")

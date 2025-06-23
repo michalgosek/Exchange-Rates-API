@@ -58,7 +58,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ExchangeRateDTO'
+                  $ref: '#/components/schemas/CryptoExchangeRateDTO'
         default:
           description: Unexpected error
           content:
@@ -89,7 +89,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ExchangeRateDTO'
+                  $ref: '#/components/schemas/GlobalExchangeRateDTO'
         default:
           description: Unexpected error
           content:
@@ -99,7 +99,7 @@ paths:
 
 components:
   schemas:
-    ExchangeRateDTO:
+    GlobalExchangeRateDTO:
       type: object
       properties:
         from:
@@ -112,6 +112,20 @@ components:
         - from
         - to
         - rate
+
+    CryptoExchangeRateDTO:
+      type: object
+      properties:
+        from:
+          type: string
+        to:
+          type: string
+        amount:
+          type: string
+      required:
+        - from
+        - to
+        - amount
 
     ErrorDTO:
       type: object

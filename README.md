@@ -26,8 +26,8 @@ Returns a JSON of exchange rate.
 
 ```json
 {
+    "amount": "57613.353535",
     "from": "WBTC",
-    "rate": "57613.353535",
     "to": "USDT"
 }
 ```
