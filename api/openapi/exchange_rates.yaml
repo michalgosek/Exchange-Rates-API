@@ -21,7 +21,7 @@ tags:
     description: Everything about exchange rates.
 
 paths:
-  /api/v1/convert:
+  /api/v1/exchange:
     get:
       tags: 
         - Exchange Rates 

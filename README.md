@@ -8,7 +8,7 @@ This project is a web application that provides basic functionality for calculat
 The application's structure is intended to demonstrate a scalable and extensible design, allowing for the addition of new business features and advanced techniques to enhance scalability and fault tolerance. 
 
 
-## 🔄 `GET /api/v1/convert`
+## 🔄 `GET /api/v1/exchange`
 
 Returns the exchange rate for a specified cryptocurrency pair (`from` → `to`) and amount using a preconfigured exchange rates table.
 

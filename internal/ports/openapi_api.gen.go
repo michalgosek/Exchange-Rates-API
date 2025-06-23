@@ -14,7 +14,7 @@ import (
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// Returns the exchange rates for cryptocurrencies based on a preconfigured exchange rates table.
-	// (GET /api/v1/convert)
+	// (GET /api/v1/exchange)
 	GetCryptoExchangeRate(c *gin.Context, params GetCryptoExchangeRateParams)
 	// Returns the latest exchange rates.
 	// (GET /api/v1/rates)
@@ -153,6 +153,6 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 		ErrorHandler:       errorHandler,
 	}
 
-	router.GET(options.BaseURL+"/api/v1/convert", wrapper.GetCryptoExchangeRate)
+	router.GET(options.BaseURL+"/api/v1/exchange", wrapper.GetCryptoExchangeRate)
 	router.GET(options.BaseURL+"/api/v1/rates", wrapper.GetGlobalExchangeRates)
 }

@@ -12,7 +12,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:3000/api/v1/rates?currencies=PLN,GBP,EUR",
+					"raw": "http://localhost:3000/api/v1/rates?currencies=EUR,PLN",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -26,7 +26,7 @@
 					"query": [
 						{
 							"key": "currencies",
-							"value": "PLN,GBP,EUR"
+							"value": "EUR,PLN"
 						}
 					]
 				}
@@ -34,12 +34,12 @@
 			"response": []
 		},
 		{
-			"name": "Convert",
+			"name": "Exchange",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:3000/api/v1/convert?from=FLOKI&to=BEER&amount=2",
+					"raw": "http://localhost:3000/api/v1/exchange?from=FLOKI&to=BEER&amount=2",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -48,7 +48,7 @@
 					"path": [
 						"api",
 						"v1",
-						"convert"
+						"exchange"
 					],
 					"query": [
 						{
