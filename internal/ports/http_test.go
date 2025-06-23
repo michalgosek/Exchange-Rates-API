@@ -117,19 +117,19 @@ func TestHTTPServer_GetCryptoExchangeRate_NegativeTestCases(t *testing.T) {
 	tests := map[string]struct {
 		params url.Values
 	}{
-		"should respond with 400 status code when required query parameters are missing in /api/v1/convert request - an empty query params list": {
+		"should respond with 400 status code when required query parameters are missing in /api/v1/exchange request - an empty query params list": {
 			params: url.Values{},
 		},
-		"should respond with 400 status code when required query parameters are missing in /api/v1/convert request - from query param only": {
+		"should respond with 400 status code when required query parameters are missing in /api/v1/exchange request - from query param only": {
 			params: url.Values{"from": []string{"WBTC"}},
 		},
-		"should respond with 400 status code when required query parameters are missing in /api/v1/convert request - to query param only": {
+		"should respond with 400 status code when required query parameters are missing in /api/v1/exchange request - to query param only": {
 			params: url.Values{"to": []string{"WBTC"}},
 		},
-		"should respond with 400 status code when required query parameters are missing in /api/v1/convert request - amount query param only": {
+		"should respond with 400 status code when required query parameters are missing in /api/v1/exchange request - amount query param only": {
 			params: url.Values{"amount": []string{"1"}},
 		},
-		"should respond with 400 status code when required query parameters are missing in /api/v1/convert request - query params list with from and to currency": {
+		"should respond with 400 status code when required query parameters are missing in /api/v1/exchange request - query params list with from and to currency": {
 			params: url.Values{
 				"from": []string{"USDT"},
 				"to":   []string{"WBTC"},
@@ -162,7 +162,7 @@ func TestHTTPServer_GetCryptoExchangeRate_NegativeTestCases(t *testing.T) {
 }
 
 func TestHTTPServer_GetCryptoExchangeRate_PositiveTestCase(t *testing.T) {
-	t.Run("should respond with calculated exchange rate rounded to 5 decimal places for /api/v1/convert when queried with from=WBTC, to=USDT and amount=1", func(t *testing.T) {
+	t.Run("should respond with calculated exchange rate rounded to 5 decimal places for /api/v1/exchange when queried with from=WBTC, to=USDT and amount=1", func(t *testing.T) {
 		// given:
 		const WBTCPrecision = 5
 		const USDTPrecision = 6
